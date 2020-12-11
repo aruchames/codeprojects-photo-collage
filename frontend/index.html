@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://unpkg.com/vue@next"></script>
+  </head>
+
+  <body>
+    <div id="FileUpload">
+      <form>
+
+        <input type="file" v-on:change="handleNewFile"/>
+        <ol>
+        <li v-for="file in inputFiles">
+          <img-preview :file="file" v-if="file"></img-preview>
+        </li>
+      </ol>
+      <input type="radio" id="Vertical" value="Vertical" v-model="orientation">
+      <label for="Vertical">Vertical</label>
+      <br>
+      <input type="radio" id="Horizontal" value="Horizontal" v-model="orientation">
+      <label for="Horizontal">Horizontal</label>
+      <br>
+      <br>
+      <button type="button" v-on:click="submitStitch">Submit files</button>
+
+    </form>
+      </div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+
+</html>
+
