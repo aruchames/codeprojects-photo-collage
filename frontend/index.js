@@ -86,13 +86,18 @@ const FileUpload = {
 
       req
         .then((response) => {
-          if (response.ok){
+          if (response.ok) {
             return response.blob();
           }
-          if (response.status == 202)
+          if (response.status == 202) {
+            return null;
+          }
         })
         .then((value) => {
-          this.finalImage = value;
+          if (value) {
+            this.finalImage = value;
+            this.loading = false;
+          }
         });
     },
   },

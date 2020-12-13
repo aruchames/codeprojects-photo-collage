@@ -2,7 +2,6 @@ from flask import Flask, request, Response, send_file
 from tasks import stitchVertical
 from flask_cors import CORS
 from PIL import Image
-from celery import AsyncResult
 
 from io import BytesIO
 import uuid
