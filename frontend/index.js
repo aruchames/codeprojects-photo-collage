@@ -31,6 +31,7 @@ const FileUpload = {
       imgIds: [],
       jobId: "",
       finalImage: undefined,
+      color: "#00FF00",
     };
   },
   methods: {
@@ -38,8 +39,7 @@ const FileUpload = {
       this.inputFiles.push(event.target.files[0]);
       var req = fetch("http://172.18.232.75:5000/images", {
         method: "post",
-        body: this.inputFiles[0],
-        imgIds: [],
+        body: this.inputFiles[this.inputFiles.length - 1],
       });
 
       req
@@ -64,6 +64,8 @@ const FileUpload = {
         body: JSON.stringify({
           ids: this.imgIds,
           orientation: this.orientation,
+          border: 100,
+          color: this.color,
         }),
       });
 
@@ -78,16 +80,15 @@ const FileUpload = {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+          orientation: this.orientation,
           id: this.jobId,
-        }),
+        },
       });
 
       req
         .then((response) => {
           if (response.ok) {
-            return response.blob();
+            return response.text();
           }
           if (response.status == 202) {
             return null;

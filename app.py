@@ -1,10 +1,12 @@
 from flask import Flask, request, Response, send_file
-from tasks import stitchVertical
+from tasks import *
 from flask_cors import CORS
 from PIL import Image
+from celery.result import AsyncResult
 
 from io import BytesIO
 import uuid
+import codecs
 
 app = Flask(__name__)
 
@@ -28,19 +30,30 @@ def handle_image():
 def stitch():
     if request.method == 'POST':
         img_ids = request.json["ids"]
+        if len(img_ids) == 0:
+            return Response("Bad request, please do not send requests without pictures", status=400)
         orientation = request.json["orientation"]
-
+        border = request.json["border"]
+        colorstring = str(request.json["color"]).lstrip("#")
+        color = tuple(int(colorstring[i:i+2], 16) for i in (0, 2, 4))
+        print(color)
         if orientation == "Horizontal":
-            return "not implemented - horizontal stitch"
+            result = stitchHorizontal.delay(img_ids, border, color)
         elif orientation == "Vertical":
-            result = stitchVertical.delay(img_ids)
-            return result.task_id
+            result = stitchVertical.delay(img_ids, border, color)
+        else:
+            return Response("Bad request, must send horizontal or vertical", status=400)
+        return result.task_id
 
     if request.method == 'GET':
-        id = request.json["id"]
-        res = AsyncResult(id)
+        id = request.headers.get("id")
+        orientation = request.headers.get("orientation")
+        if orientation == "Vertical":
+            res = stitchVertical.AsyncResult(id)
+        else:
+            res = stitchHorizontal.AsyncResult(id)
         if res.ready():
-            finalImage = res.get()
-            return send_file(finalImage, mimetype='image/jpg')
+            imgId = res.get()
+            return f"results/{imgId}.jpg"
         else:
             return Response("Still Processing", status=202)

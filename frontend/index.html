@@ -5,27 +5,39 @@
   </head>
 
   <body>
-    <div id="FileUpload">
-      <form>
+    <div id="FileUpload" class="Container">
 
-        <input type="file" v-on:change="handleNewFile"/>
-        <ol>
-        <li v-for="file in inputFiles">
-          <img-preview :file="file" v-if="file"></img-preview>
-        </li>
-      </ol>
-      <input type="radio" id="Vertical" value="Vertical" v-model="orientation">
-      <label for="Vertical">Vertical</label>
-      <br>
-      <input type="radio" id="Horizontal" value="Horizontal" v-model="orientation">
-      <label for="Horizontal">Horizontal</label>
-      <br>
+      <div class="UploadForm">
+        <form>
+
+          <input type="file" v-on:change="handleNewFile"/>
+          <ol>
+            <li v-for="file in inputFiles">
+              <img-preview :file="file" v-if="file"></img-preview>
+            </li>
+          </ol>
+          <input type="radio" id="Vertical" value="Vertical" v-model="orientation">
+          <label for="Vertical">Vertical</label>
+          <br>
+          <input type="radio" id="Horizontal" value="Horizontal" v-model="orientation">
+          <label for="Horizontal">Horizontal</label>
+          <br>
+          <label for="ColorPicker">Choose Color</label>
+          <input type="color" id="ColorPicker" v-model="color" />
+          <br>
+      <label for="Border">Border width</label>
+      <input type="number" v-model="border"/>
       <br>
       <button type="button" v-on:click="submitStitch">Submit files</button>
-
+      <button type="button" v-on:click="getStitch">Check Status</button>
     </form>
+  </div>
+    <div v-bind:class="{ : orientation == 'Vertical' }">
+        Image will load here
+        <img v-bind:class="{ isVertical: isActive }" v-bind:src="finalImage" v-if="finalImage" />
       </div>
     </div>
+  </div>
     <script src="index.js"></script>
   </body>
 
